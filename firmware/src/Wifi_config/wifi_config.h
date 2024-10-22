@@ -8,6 +8,8 @@
 #include <ESPmDNS.h>  // Thư viện mDNS để ánh xạ tên miền cục bộ
 #include <nvs_flash.h>
 #include <nvs.h>
+#include "I2SMicSampler.h"
+#include "I2SSampler.h"
 #include "../Peripheral/config.h"
 
 #include <ArduinoWebsockets.h>

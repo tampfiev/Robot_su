@@ -30,14 +30,25 @@ char* i2s_read_buff;
 SemaphoreHandle_t xSemaphore;
 
 
-void i2s_adc_task() {
-  client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
-}
+// void i2s_adc_task() {
+//   size_t bytes_read;
+//   i2s_read(I2S_PORT, (void*)i2s_read_buff, I2S_READ_LEN, &bytes_read, portMAX_DELAY);
+//   i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2s_read_buff, I2S_READ_LEN);
+//   client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
+//   client.poll();
+// }
 
 void i2s_adc_convert(uint8_t *i2sData) {
   i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2sData, I2S_READ_LEN);
   client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
   client.poll();
+}
+
+void i2s_adc_task() {
+  size_t bytes_read;
+  i2s_read(I2S_PORT, (void*)i2s_read_buff, I2S_READ_LEN, &bytes_read, portMAX_DELAY);
+  i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2s_read_buff, I2S_READ_LEN);
+  client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
 }
 
 void sendLinkToESP2() {
@@ -52,28 +63,27 @@ void onMessageCallback(WebsocketsMessage message) {
   Serial.println(respond_message);
 
   if (respond_message.indexOf("\"audio\":") != -1) {
-    if (xSemaphoreTake(xSemaphore, portMAX_DELAY) == pdTRUE) {
-        // Access shared variables safely
-        int indexOfText = respond_message.indexOf("\"text\":");
-        int indexOfAudio = respond_message.indexOf("\"audio\":");
-        int indexOfEmotion = respond_message.indexOf("\"emotion\":");
-        String textToSpeech = respond_message.substring(indexOfText + 8, indexOfAudio - 2);
-        linkAudioToSpeech = respond_message.substring(indexOfAudio + 9, indexOfEmotion - 2);
-        Serial.println("Text: " + textToSpeech);
-        Serial.println("Audio Link: " + linkAudioToSpeech);
-        currentState = 2;
-        linkSent = false;
+    int indexOfText = respond_message.indexOf("\"text\":");
+    int indexOfAudio = respond_message.indexOf("\"audio\":");
+    int indexOfEmotion = respond_message.indexOf("\"emotion\":");
+    String textToSpeech = respond_message.substring(indexOfText + 8, indexOfAudio - 2);
+    linkAudioToSpeech = respond_message.substring(indexOfAudio + 9, indexOfEmotion - 2);
+    Serial.println("Text: " + textToSpeech);
+    Serial.println("Audio Link: " + linkAudioToSpeech);
 
-        xSemaphoreGive(xSemaphore);  // Release the semaphore
-    }
+    currentState = 2;
+    linkSent = false;
   }
 }
+
+
 
 void i2s_adc_data_scale(uint8_t* d_buff, uint8_t* s_buff, uint32_t len) {
   uint32_t j = 0;
   uint32_t dac_value = 0;
-  for (int i = 0; i < len; i += 2) {
-    dac_value = ((((uint16_t)(s_buff[i + 1] & 0xf) << 8) | (s_buff[i])));
+  for (int i = 0; i < len; i += 4) {  // 4 bytes per 32-bit sample
+    uint32_t sample = ((uint32_t)s_buff[i + 3] << 24) | ((uint32_t)s_buff[i + 2] << 16) | ((uint32_t)s_buff[i + 1] << 8) | (uint32_t)s_buff[i];
+    dac_value = sample / 65537;
     d_buff[j++] = 0;
     d_buff[j++] = dac_value * 256 / 2048;
   }
@@ -109,15 +119,44 @@ void voiceWakeupTask(void *param)
   {
     // wait for some audio samples to arrive
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
-    if (ulNotificationValue > 0)
-    {
-      // if(status_Robot == WAIT_INPUT)
-      // {
-      //   MIC_WAKEUP();
-          commandDetector->run();
+    Serial.printf("current State: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
+    // if (ulNotificationValue > 0)
+    // {
+    //   // if(status_Robot == WAIT_INPUT)
+    //   // {
+    //   //   MIC_WAKEUP();
+    //       commandDetector->run();
   
-      // }
+    //   // }     
+    // }
+    if(currentState == 1)
+    {
+      i2s_adc_task();
+      // flag_I2S = false;
     }
+    // else if((status_Robot == ROBOT_ONLINE) && 
+    // if(flag_I2S == true)
+    // {
+    // if((currentState == 1) && (flag_I2S))
+    // {
+    //   i2s_adc_task();
+    //   flag_I2S = false;
+    // }
+      
+    if(currentState == 2)
+    {
+      if (!linkSent) {
+        memset(i2s_read_buff, 0, I2S_READ_LEN);
+        memset(flash_write_buff, 0, I2S_READ_LEN);
+        stopI2S();
+        // i2s_sampler->stop();
+        sendLinkToESP2();
+        linkSent = true;
+      }
+    }
+    // Serial.printf("current State: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
+    // }
+    // Serial.printf("current State: %d\r\n", currentState);
     // Serial.printf("status robot run wait input= %d\r\n", status_Robot);
     vTaskDelay(pdMS_TO_TICKS(10)); 
   }

@@ -39,6 +39,6 @@ void I2SMicSampler::processI2SData_scale(uint8_t* s_buff, uint8_t* d_buff, uint3
     uint32_t sample = ((uint32_t)s_buff[i + 3] << 24) | ((uint32_t)s_buff[i + 2] << 16) | ((uint32_t)s_buff[i + 1] << 8) | (uint32_t)s_buff[i];
     dac_value = sample / 65537;
     d_buff[j++] = 0;
-    d_buff[j++] = dac_value; // * 256 / 2048;   *256/256
+    d_buff[j++] = dac_value * 256 / 2048;  // *256/256
   }
 }

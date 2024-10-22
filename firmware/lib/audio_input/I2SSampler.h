@@ -8,6 +8,7 @@
 
 #include "RingBuffer.h"
 
+
 // #include "../../src/Wifi_config/wifi_config.h"
 
 
@@ -17,6 +18,8 @@
 extern int status_Robot;
 extern uint8_t* flash_write_buff;
 extern SemaphoreHandle_t xSemaphore;
+
+extern bool flag_I2S;
 
 /**
  * Base Class for both the ADC and I2S sampler

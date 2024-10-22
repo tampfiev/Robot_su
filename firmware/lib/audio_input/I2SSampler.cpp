@@ -7,6 +7,9 @@
 // #include "../../src/Voice/voice.h"
 // #include "../../src/Wifi_config/wifi_config.h"
 
+
+bool flag_I2S = false;
+
 void I2SSampler::addSample(int16_t sample)
 {
     // store the sample
@@ -42,10 +45,24 @@ void i2sReaderTask(void *param)
                     // {
                         sampler->processI2SData((uint8_t*)i2sData, bytesRead);
                     // }
-                    // else if(status_Robot == 3) //ROBOT_ONLINE
-                    // {
+                    if(status_Robot == 3) //ROBOT_ONLINE
+                    {
                         sampler->processI2SData_scale((uint8_t*)i2sData, flash_write_buff, 1024);
-                    // }
+                        flag_I2S = true;
+                        // if(currentState == 1)
+                        // {
+                        //   i2s_adc_task();
+                        // }
+                        // else if(currentState == 2)
+                        // {
+                        //   if (!linkSent) {
+                        //     memset(flash_write_buff, 0, 1024);
+                        //     // i2s_sampler->stop();
+                        //     sendLinkToESP2();
+                        //     linkSent = true;
+                        //   }
+                        // }                      
+                    }
                 } while (bytesRead > 0);
             }
         }
@@ -71,11 +88,12 @@ void I2SSampler::start(i2s_port_t i2s_port, i2s_config_t &i2s_config, TaskHandle
     m_i2s_port = i2s_port;
     m_processor_task_handle = processor_task_handle;
     //install and start i2s driver
-    i2s_driver_install(m_i2s_port, &i2s_config, 4, &m_i2s_queue);
+    i2s_driver_install(m_i2s_port, &i2s_config, 0, NULL);
+    // i2s_driver_install(m_i2s_port, &i2s_config, 4, &m_i2s_queue);
     // set up the I2S configuration from the subclass
     configureI2S();
     // start a task to read samples
-    xTaskCreatePinnedToCore(i2sReaderTask, "i2s Reader Task", 4096, this, 1, &m_reader_task_handle, 0);
+    // xTaskCreatePinnedToCore(i2sReaderTask, "i2s Reader Task", 4096, this, 1, &m_reader_task_handle, 1);
 }
 
 void I2SSampler::stop()
