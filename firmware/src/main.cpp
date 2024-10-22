@@ -52,7 +52,7 @@ void setup()
   }
   Serial.println("WebSocket connected!");
   // TaskHandle_t voiceConversationTaskHandle;
-  // xTaskCreatePinnedToCore(voiceConversationTask, "Conversation", 8192, NULL, 1, &voiceConversationTaskHandle, 0);
+  // xTaskCreatePinnedToCore(voiceConversationTask, "Conversation", 4096, NULL, 1, &voiceConversationTaskHandle, 0);
 #endif
 
 #if(ESP32_VOICE_WAKEUP)
@@ -64,7 +64,7 @@ void setup()
 
   // // set up the i2s sample writer task
   
-  xTaskCreatePinnedToCore(voiceWakeupTask, "Wakeup", 4096, commandDetector, 3, &voiceWakeupTaskHandle, 0);
+  xTaskCreatePinnedToCore(voiceWakeupTask, "Wakeup", 8192, commandDetector, 1, &voiceWakeupTaskHandle, 0);
   i2s_sampler->start(I2S_NUM_0, i2sMicConfig, voiceWakeupTaskHandle);
   
 #endif  

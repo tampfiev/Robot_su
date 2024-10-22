@@ -35,8 +35,8 @@ void i2sReaderTask(void *param)
                 do
                 {
                     // read data from the I2S peripheral
-                    // uint8_t i2sData[1024];
-                    i2s_read(sampler->getI2SPort(), (void*) i2sData, 8192, &bytesRead, portMAX_DELAY);
+                    // uint8_t i2sData[8192];
+                    i2s_read(sampler->getI2SPort(), (void*) i2sData, 1024, &bytesRead, portMAX_DELAY);
                     // process the raw data
                     // if(status_Robot == 2) //WAITING INPUT
                     // {
@@ -44,7 +44,7 @@ void i2sReaderTask(void *param)
                     // }
                     // else if(status_Robot == 3) //ROBOT_ONLINE
                     // {
-                        // sampler->processI2SData_scale((uint8_t*)i2sData, flash_write_buff, 1024);
+                        sampler->processI2SData_scale((uint8_t*)i2sData, flash_write_buff, 1024);
                     // }
                 } while (bytesRead > 0);
             }
@@ -75,7 +75,7 @@ void I2SSampler::start(i2s_port_t i2s_port, i2s_config_t &i2s_config, TaskHandle
     // set up the I2S configuration from the subclass
     configureI2S();
     // start a task to read samples
-    xTaskCreatePinnedToCore(i2sReaderTask, "i2s Reader Task", 8192, this, 1, &m_reader_task_handle, 0);
+    xTaskCreatePinnedToCore(i2sReaderTask, "i2s Reader Task", 4096, this, 1, &m_reader_task_handle, 0);
 }
 
 void I2SSampler::stop()
