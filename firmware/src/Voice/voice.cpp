@@ -119,7 +119,7 @@ void voiceWakeupTask(void *param)
   {
     // wait for some audio samples to arrive
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
-    Serial.printf("current State: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
+    // Serial.printf("current State: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
     // if (ulNotificationValue > 0)
     // {
     //   // if(status_Robot == WAIT_INPUT)
@@ -132,6 +132,7 @@ void voiceWakeupTask(void *param)
     if(currentState == 1)
     {
       i2s_adc_task();
+      client.poll();
       // flag_I2S = false;
     }
     // else if((status_Robot == ROBOT_ONLINE) && 

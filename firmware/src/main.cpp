@@ -75,7 +75,7 @@ void setup()
 
   // // set up the i2s sample writer task
   
-  // xTaskCreatePinnedToCore(voiceWakeupTask, "Wakeup", 8192, commandDetector, 1, &voiceWakeupTaskHandle, 1);
+  xTaskCreatePinnedToCore(voiceWakeupTask, "Wakeup", 8192, commandDetector, 1, &voiceWakeupTaskHandle, 1);
   // i2s_sampler->start(I2S_NUM_0, i2sMicConfig, voiceWakeupTaskHandle);
   
 #endif  
@@ -84,34 +84,34 @@ void setup()
 void loop()
 {
   // commandDetector->run();
-  // vTaskDelay(pdMS_TO_TICKS(10));
+  vTaskDelay(pdMS_TO_TICKS(10));
   // Serial.printf("status robot run = %d\r\n", status_Robot);
-  switch (currentState) {
-    case 1:
-      i2s_adc_task();
-      client.poll();
-      break;
+  // switch (currentState) {
+  //   case 1:
+  //     i2s_adc_task();
+  //     client.poll();
+  //     break;
 
-    case 2:
-      if (!linkSent) {
-        memset(i2s_read_buff, 0, I2S_READ_LEN);
-        memset(flash_write_buff, 0, I2S_READ_LEN);
-        stopI2S();  // Dừng I2S khi chuyển sang trạng thái 2
-        sendLinkToESP2();
-        linkSent = true;
-      }
-      if (Serial2.available()) {
-        char response = Serial2.read();
-        if (response == '1') {
-          Serial.println("Received '1' from ESP2, chuyển sang trạng thái 1");
-          currentState = 1;
-          linkSent = false;
-          startI2S();  // Khởi động lại I2S khi quay lại trạng thái 1
-          Serial.println(currentState);
-          Serial.println(linkSent);
-          delay(10);
-        }
-      }
-      break;
-  }
+  //   case 2:
+  //     if (!linkSent) {
+  //       memset(i2s_read_buff, 0, I2S_READ_LEN);
+  //       memset(flash_write_buff, 0, I2S_READ_LEN);
+  //       stopI2S();  // Dừng I2S khi chuyển sang trạng thái 2
+  //       sendLinkToESP2();
+  //       linkSent = true;
+  //     }
+  //     if (Serial2.available()) {
+  //       char response = Serial2.read();
+  //       if (response == '1') {
+  //         Serial.println("Received '1' from ESP2, chuyển sang trạng thái 1");
+  //         currentState = 1;
+  //         linkSent = false;
+  //         startI2S();  // Khởi động lại I2S khi quay lại trạng thái 1
+  //         Serial.println(currentState);
+  //         Serial.println(linkSent);
+  //         delay(10);
+  //       }
+  //     }
+  //     break;
+  // }
 }

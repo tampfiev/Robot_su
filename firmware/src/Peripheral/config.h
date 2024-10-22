@@ -35,7 +35,7 @@
 
 
 #define ESP32_WIFI_CONFIG              1
-#define ESP32_VOICE_WAKEUP             0
+#define ESP32_VOICE_WAKEUP             1
 #define ESP32_VOICE_CONVERSATION       1
 
 
