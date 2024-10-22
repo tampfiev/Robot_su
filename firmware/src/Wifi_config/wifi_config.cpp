@@ -10,7 +10,7 @@ const uint16_t websockets_server_port = 8763;
 
 WebsocketsClient client;
 uint8_t* flash_write_buff;
-int currentState = 1;   // Trạng thái 1 là thu và gửi dữ liệu, 2 là gửi link qua UART và chờ phản hồi
+int currentState = 0;   // Trạng thái 1 là thu và gửi dữ liệu, 2 là gửi link qua UART và chờ phản hồi
 bool linkSent = false;  // Biến cờ để theo dõi việc gửi link chỉ một lần
 String linkAudioToSpeech;  // Lưu link âm thanh để gửi qua UART
 

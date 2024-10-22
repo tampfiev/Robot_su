@@ -31,7 +31,7 @@
 #define I2S_PORT I2S_NUM_0
 #define I2S_SAMPLE_RATE   (16000)
 #define I2S_SAMPLE_BITS   (16)
-#define I2S_READ_LEN      (1024)
+#define I2S_READ_LEN      (4096)
 
 
 #define ESP32_WIFI_CONFIG              1

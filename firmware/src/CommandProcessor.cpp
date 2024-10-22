@@ -40,8 +40,9 @@ void CommandProcessor::processCommand(uint16_t commandIndex)
     {
     case 0: // marvin -> voice conversation
         currentState = 1;
-        // status_Robot = ROBOT_ONLINE;
-        // i2s_sampler->stop();    
+        status_Robot = ROBOT_ONLINE;
+        // i2s_sampler->stop(); 
+        // startI2S();   
         
         // if (voiceWakeupTaskHandle != NULL) {
         //     vTaskDelete(voiceWakeupTaskHandle);

@@ -35,8 +35,8 @@ void setup()
   //     delay(10);
   // }
 
-  const char* ssid = "Elcom Corp";
-  const char* password = "elcom@123";
+  const char* ssid = "1805";
+  const char* password = "123456a@";
 
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -49,7 +49,7 @@ void setup()
   // esp_task_wdt_init(10, false);
   // disableCore0WDT();  // Disable watchdog for core 0
   // disableCore1WDT();  // Disable watchdog for core 1
-  startI2S();
+  // startI2S();
 #if(ESP32_VOICE_CONVERSATION)
   i2s_read_buff = (char*)calloc(I2S_READ_LEN, sizeof(char));
   flash_write_buff = (uint8_t*)calloc(I2S_READ_LEN, sizeof(char));
@@ -75,8 +75,8 @@ void setup()
 
   // // set up the i2s sample writer task
   
-  xTaskCreatePinnedToCore(voiceWakeupTask, "Wakeup", 8192, commandDetector, 1, &voiceWakeupTaskHandle, 1);
-  // i2s_sampler->start(I2S_NUM_0, i2sMicConfig, voiceWakeupTaskHandle);
+  xTaskCreatePinnedToCore(voiceWakeupTask, "Wakeup", 8192, commandDetector, 1, &voiceWakeupTaskHandle, 0);
+  i2s_sampler->start(I2S_NUM_0, i2sMicConfig, voiceWakeupTaskHandle);
   
 #endif  
 }

@@ -30,13 +30,12 @@ char* i2s_read_buff;
 SemaphoreHandle_t xSemaphore;
 
 
-// void i2s_adc_task() {
-//   size_t bytes_read;
-//   i2s_read(I2S_PORT, (void*)i2s_read_buff, I2S_READ_LEN, &bytes_read, portMAX_DELAY);
-//   i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2s_read_buff, I2S_READ_LEN);
-//   client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
-//   client.poll();
-// }
+void i2s_adc_task() {
+  // size_t bytes_read;
+  // i2s_read(I2S_PORT, (void*)i2s_read_buff, I2S_READ_LEN, &bytes_read, portMAX_DELAY);
+  // i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2s_read_buff, I2S_READ_LEN);
+  client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
+}
 
 void i2s_adc_convert(uint8_t *i2sData) {
   i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2sData, I2S_READ_LEN);
@@ -44,12 +43,12 @@ void i2s_adc_convert(uint8_t *i2sData) {
   client.poll();
 }
 
-void i2s_adc_task() {
-  size_t bytes_read;
-  i2s_read(I2S_PORT, (void*)i2s_read_buff, I2S_READ_LEN, &bytes_read, portMAX_DELAY);
-  i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2s_read_buff, I2S_READ_LEN);
-  client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
-}
+// void i2s_adc_task() {
+//   size_t bytes_read;
+//   i2s_read(I2S_PORT, (void*)i2s_read_buff, I2S_READ_LEN, &bytes_read, portMAX_DELAY);
+//   i2s_adc_data_scale(flash_write_buff, (uint8_t*)i2s_read_buff, I2S_READ_LEN);
+//   client.sendBinary((const char*)flash_write_buff, I2S_READ_LEN);
+// }
 
 void sendLinkToESP2() {
   if (linkAudioToSpeech.length() > 0) {
@@ -120,42 +119,33 @@ void voiceWakeupTask(void *param)
     // wait for some audio samples to arrive
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
     // Serial.printf("current State: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
-    // if (ulNotificationValue > 0)
-    // {
-    //   // if(status_Robot == WAIT_INPUT)
-    //   // {
-    //   //   MIC_WAKEUP();
-    //       commandDetector->run();
-  
-    //   // }     
-    // }
-    if(currentState == 1)
+    if (ulNotificationValue > 0)
+    {
+      if(status_Robot == 0)
+      {
+          commandDetector->run();
+      }     
+    }
+    if((currentState == 1) && (status_Robot == ROBOT_ONLINE))
     {
       i2s_adc_task();
       client.poll();
+      // Serial.printf("current State: %d, status = %d\r\n", currentState, status_Robot);
       // flag_I2S = false;
-    }
-    // else if((status_Robot == ROBOT_ONLINE) && 
-    // if(flag_I2S == true)
-    // {
-    // if((currentState == 1) && (flag_I2S))
-    // {
-    //   i2s_adc_task();
-    //   flag_I2S = false;
-    // }
-      
-    if(currentState == 2)
+    }      
+    else if(currentState == 2)
     {
       if (!linkSent) {
-        memset(i2s_read_buff, 0, I2S_READ_LEN);
+        // memset(i2s_read_buff, 0, I2S_READ_LEN);
         memset(flash_write_buff, 0, I2S_READ_LEN);
-        stopI2S();
+        // stopI2S();
         // i2s_sampler->stop();
         sendLinkToESP2();
         linkSent = true;
       }
+      // Serial.printf("status robot run wait input= %d, linkSent = %d\r\n", status_Robot, linkSent);
     }
-    // Serial.printf("current State: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
+    // Serial.printf("current State1: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
     // }
     // Serial.printf("current State: %d\r\n", currentState);
     // Serial.printf("status robot run wait input= %d\r\n", status_Robot);
