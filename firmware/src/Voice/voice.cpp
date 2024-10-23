@@ -121,7 +121,7 @@ void voiceWakeupTask(void *param)
     // Serial.printf("current State: %d, flag_I2S = %d, status = %d\r\n", currentState, flag_I2S, status_Robot);
     if (ulNotificationValue > 0)
     {
-      if(status_Robot == 0)
+      if(status_Robot == WAIT_INPUT)
       {
           commandDetector->run();
       }     

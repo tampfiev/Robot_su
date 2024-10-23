@@ -31,6 +31,7 @@ extern String linkAudioToSpeech;  // Lưu link âm thanh để gửi qua UART
 bool connectToWiFi(const char* ssid, const char* password);
 void handleConnect(AsyncWebServerRequest *request);
 void connect_wifi_server();
+void disconnect_wifi_server();
 bool nvs_config(void);
 
 #endif

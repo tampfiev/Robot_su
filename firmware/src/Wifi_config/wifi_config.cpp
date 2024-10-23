@@ -293,3 +293,19 @@ void connect_wifi_server()
   // Khởi động máy chủ web
   server.begin();
 }
+
+
+void disconnect_wifi_server() 
+{
+  // Stop the web server
+  server.end();
+  Serial.println("Web server stopped");
+
+  // Disconnect the WiFi access point
+  WiFi.softAPdisconnect(true);
+  Serial.println("WiFi Access Point disconnected");
+  
+  // Optionally, stop the mDNS responder
+  MDNS.end();
+  Serial.println("mDNS responder stopped");
+}

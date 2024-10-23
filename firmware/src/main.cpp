@@ -25,25 +25,26 @@ void setup()
   Serial.println("Starting up");
   xSemaphore = xSemaphoreCreateMutex();
 #if(ESP32_WIFI_CONFIG)
-  // connect_wifi_server(); //config wifi on web server
-  // while(status_Robot == WAITING_WIFI_CONNECT)
-  // {
-  //     if(nvs_config())
-  //     {
-  //         status_Robot = ROBOT_ONLINE;
-  //     }
-  //     delay(10);
-  // }
-
-  const char* ssid = "1805";
-  const char* password = "123456a@";
-
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  connect_wifi_server(); //config wifi on web server
+  while(status_Robot == WAITING_WIFI_CONNECT)
+  {
+      if(nvs_config())
+      {
+          status_Robot = WAIT_INPUT;
+      }
+      delay(10);
   }
-  Serial.println("WiFi connected");
+  disconnect_wifi_server();
+
+  // const char* ssid = "Elcom Corp";
+  // const char* password = "elcom@123";
+
+  // WiFi.begin(ssid, password);
+  // while (WiFi.status() != WL_CONNECTED) {
+  //   delay(500);
+  //   Serial.print(".");
+  // }
+  // Serial.println("WiFi connected");
 #endif
   // make sure we don't get killed for our long running tasks
   // esp_task_wdt_init(10, false);
