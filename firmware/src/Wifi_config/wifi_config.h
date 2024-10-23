@@ -21,9 +21,6 @@ extern const char* websockets_server_host;
 extern const uint16_t websockets_server_port;
 extern WebsocketsClient client;
 extern uint8_t* flash_write_buff;
-extern int currentState;   // Trạng thái 1 là thu và gửi dữ liệu, 2 là gửi link qua UART và chờ phản hồi
-extern bool linkSent;  // Biến cờ để theo dõi việc gửi link chỉ một lần
-extern String linkAudioToSpeech;  // Lưu link âm thanh để gửi qua UART
 
 
 

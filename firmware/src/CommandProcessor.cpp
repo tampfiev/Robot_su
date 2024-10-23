@@ -35,24 +35,16 @@ const int rightStop = 1500;
 
 void CommandProcessor::processCommand(uint16_t commandIndex)
 {
-    digitalWrite(GPIO_NUM_2, HIGH);
+    LED_ON();
     switch (commandIndex)
     {
     case 0: // marvin -> voice conversation
-        currentState = 1;
+        voice_con.state = GET_VOICE_CONVERSATION;
         status_Robot = ROBOT_ONLINE;
-        // i2s_sampler->stop(); 
-        // startI2S();   
-        
-        // if (voiceWakeupTaskHandle != NULL) {
-        //     vTaskDelete(voiceWakeupTaskHandle);
-        //     voiceWakeupTaskHandle = NULL;  // Optional: Reset the handle after deletion
-        // }
-        // xTaskCreatePinnedToCore(voiceConversationTask, "Conversation", 8192, NULL, 1, &voiceConversationTaskHandle, 0);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         break;
     }
-    digitalWrite(GPIO_NUM_2, LOW);
+    LED_OFF();
 }
 
 CommandProcessor::CommandProcessor()

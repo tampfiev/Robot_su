@@ -23,7 +23,7 @@ void setup()
   Serial.begin(115200);
   delay(1000);
   Serial.println("Starting up");
-  xSemaphore = xSemaphoreCreateMutex();
+
 #if(ESP32_WIFI_CONFIG)
   connect_wifi_server(); //config wifi on web server
   while(status_Robot == WAITING_WIFI_CONNECT)
@@ -35,16 +35,6 @@ void setup()
       delay(10);
   }
   disconnect_wifi_server();
-
-  // const char* ssid = "Elcom Corp";
-  // const char* password = "elcom@123";
-
-  // WiFi.begin(ssid, password);
-  // while (WiFi.status() != WL_CONNECTED) {
-  //   delay(500);
-  //   Serial.print(".");
-  // }
-  // Serial.println("WiFi connected");
 #endif
   // make sure we don't get killed for our long running tasks
   // esp_task_wdt_init(10, false);
@@ -63,56 +53,18 @@ void setup()
     Serial.print(".");
   }
   Serial.println("WebSocket connected!");
-  // TaskHandle_t voiceConversationTaskHandle;
-  // xTaskCreatePinnedToCore(voiceConversationTask, "Conversation", 4096, NULL, 1, &voiceConversationTaskHandle, 0);
 #endif
 
 #if(ESP32_VOICE_WAKEUP)
-  // the command processor
   CommandProcessor *command_processor = new CommandProcessor();
-
-  // // create our application
   CommandDetector *commandDetector = new CommandDetector(i2s_sampler, command_processor);
-
-  // // set up the i2s sample writer task
   
-  xTaskCreatePinnedToCore(voiceWakeupTask, "Wakeup", 8192, commandDetector, 1, &voiceWakeupTaskHandle, 0);
-  i2s_sampler->start(I2S_NUM_0, i2sMicConfig, voiceWakeupTaskHandle);
-  
+  xTaskCreatePinnedToCore(voiceProcessTask, "Wakeup", 8192, commandDetector, 1, &voiceProcessTaskHandle, 0);
+  i2s_sampler->start(I2S_NUM_0, i2sMicConfig, voiceProcessTaskHandle);
 #endif  
 }
 
 void loop()
 {
-  // commandDetector->run();
   vTaskDelay(pdMS_TO_TICKS(10));
-  // Serial.printf("status robot run = %d\r\n", status_Robot);
-  // switch (currentState) {
-  //   case 1:
-  //     i2s_adc_task();
-  //     client.poll();
-  //     break;
-
-  //   case 2:
-  //     if (!linkSent) {
-  //       memset(i2s_read_buff, 0, I2S_READ_LEN);
-  //       memset(flash_write_buff, 0, I2S_READ_LEN);
-  //       stopI2S();  // Dừng I2S khi chuyển sang trạng thái 2
-  //       sendLinkToESP2();
-  //       linkSent = true;
-  //     }
-  //     if (Serial2.available()) {
-  //       char response = Serial2.read();
-  //       if (response == '1') {
-  //         Serial.println("Received '1' from ESP2, chuyển sang trạng thái 1");
-  //         currentState = 1;
-  //         linkSent = false;
-  //         startI2S();  // Khởi động lại I2S khi quay lại trạng thái 1
-  //         Serial.println(currentState);
-  //         Serial.println(linkSent);
-  //         delay(10);
-  //       }
-  //     }
-  //     break;
-  // }
 }

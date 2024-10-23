@@ -42,8 +42,7 @@
 #define LED_PIN             GPIO_NUM_2
 #define BUTTON              GPIO_NUM_32
 
-#define L_R_MIC_PIN         GPIO_NUM_14   //add on
-
+#define TIME_OUT             1000 //10s
 
 
 typedef enum {
@@ -73,8 +72,6 @@ extern int status_Robot; //WAITING_WIFI_CONNECT
 
 void LED_ON(void);
 void LED_OFF(void);
-void MIC_WAKEUP(void);
-void MIC_CONVERSATION(void);
 
 
 

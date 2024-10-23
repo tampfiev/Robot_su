@@ -12,15 +12,6 @@ void LED_OFF(void)
     digitalWrite(LED_PIN, LOW);
 }
 
-void MIC_WAKEUP(void)
-{
-    digitalWrite(L_R_MIC_PIN, LOW);
-}
-
-void MIC_CONVERSATION(void)
-{
-    digitalWrite(L_R_MIC_PIN, HIGH);
-}
 
 
 

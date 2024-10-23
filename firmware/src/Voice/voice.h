@@ -24,8 +24,7 @@
 extern i2s_config_t i2sMicConfig;
 extern i2s_pin_config_t i2s_mic_pins;
 extern char* i2s_read_buff;
-extern TaskHandle_t voiceWakeupTaskHandle;
-extern TaskHandle_t voiceConversationTaskHandle;
+extern TaskHandle_t voiceProcessTaskHandle;
 extern I2SSampler *i2s_sampler;
 
 
@@ -36,14 +35,38 @@ using namespace websockets;
 extern WebsocketsClient client;
 
 extern uint8_t* flash_write_buff;
-
-extern int currentState;   // Trạng thái 1 là thu và gửi dữ liệu, 2 là gửi link qua UART và chờ phản hồi
-extern bool linkSent;  // Biến cờ để theo dõi việc gửi link chỉ một lần
-
-extern String linkAudioToSpeech;  // Lưu link âm thanh để gửi qua UART
-
-
 extern SemaphoreHandle_t xSemaphore;
+
+
+typedef enum {
+    NO_READ,
+    GET_VOICE_CONVERSATION,
+    SEND_VOICE_SERVER
+} state_voice;
+
+class Voice_Conversation
+{
+public:
+    int state = NO_READ;
+    bool linkSent = false;
+    String linkAudio;
+
+// protected:
+//     void addSample(int16_t sample);
+//     virtual void configureI2S() = 0;
+//     virtual void processI2SData(uint8_t *i2sData, size_t bytesRead) = 0;
+//     virtual void processI2SData_scale(uint8_t* s_buff, uint8_t* d_buff, uint32_t len) = 0;
+//     i2s_port_t getI2SPort()
+//     {
+//         return m_i2s_port;
+//     }
+
+public:
+    void sendLink2ESP(void);
+    void sendVoice2Server(const char *buff);
+};
+
+extern Voice_Conversation voice_con;
 
 
 void i2s_adc_task();
@@ -54,8 +77,7 @@ void i2s_adc_data_scale(uint8_t* d_buff, uint8_t* s_buff, uint32_t len);
 void onEventsCallback(WebsocketsEvent event, String data);
 void startI2S();
 void stopI2S();
-void voiceWakeupTask(void *param);
-void voiceConversationTask(void *param);
+void voiceProcessTask(void *param);
 
 
 
