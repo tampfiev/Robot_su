@@ -38,7 +38,7 @@ void i2sReaderTask(void *param)
                 do
                 {
                     // read data from the I2S peripheral
-                    // uint8_t i2sData[1024];
+                    // uint8_t i2sData[4096];
                     i2s_read(sampler->getI2SPort(), (void*) i2sData, 4096, &bytesRead, portMAX_DELAY);
                     // process the raw data
                     if(status_Robot == 2) //WAITING INPUT

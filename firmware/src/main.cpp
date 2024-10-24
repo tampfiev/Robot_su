@@ -23,12 +23,12 @@ void setup()
   Serial.begin(115200);
   delay(1000);
   Serial.println("Starting up");
-  // pinMode(HOME_PIN, INPUT);
-  // pinMode(ENTER_PIN, INPUT);
-  // pinMode(LEFT_PIN, INPUT);
-  // pinMode(RIGHT_PIN, INPUT);
-  // pinMode(SS1_PIN, INPUT);
-  // pinMode(SS2_PIN, INPUT);
+  pinMode(HOME_PIN, INPUT);
+  pinMode(ENTER_PIN, INPUT);
+  pinMode(LEFT_PIN, INPUT);
+  pinMode(RIGHT_PIN, INPUT);
+  pinMode(SS1_PIN, INPUT);
+  pinMode(SS2_PIN, INPUT);
 
 #if(ESP32_WIFI_CONFIG)
   // connect_wifi_server(); //config wifi on web server
@@ -43,7 +43,7 @@ void setup()
   // disconnect_wifi_server();
 #endif
   // make sure we don't get killed for our long running tasks
-  // esp_task_wdt_init(10, false);
+  esp_task_wdt_init(10, false);
   // disableCore0WDT();  // Disable watchdog for core 0
   // disableCore1WDT();  // Disable watchdog for core 1
   // startI2S();

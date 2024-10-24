@@ -44,13 +44,13 @@
 
 
 #define LED_PIN             GPIO_NUM_2
-#define HOME_PIN            GPIO_NUM_21
-#define ENTER_PIN           GPIO_NUM_22
-#define LEFT_PIN            GPIO_NUM_34
-#define RIGHT_PIN           GPIO_NUM_35
+#define HOME_PIN            GPIO_NUM_32
+#define ENTER_PIN           GPIO_NUM_34
+#define LEFT_PIN            GPIO_NUM_35
+#define RIGHT_PIN           GPIO_NUM_4
 
-#define SS1_PIN             GPIO_NUM_4
-#define SS2_PIN             GPIO_NUM_32
+#define SS1_PIN             GPIO_NUM_21
+#define SS2_PIN             GPIO_NUM_22
 
 #define PUSH_BUTTON         LOW
 

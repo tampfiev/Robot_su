@@ -157,6 +157,7 @@ void voiceProcessTask(void *param)
         {
           voice_con.state = NO_READ;
           status_Robot = WAIT_INPUT;
+          memset(flash_write_buff, 0, I2S_READ_LEN);
         }
 #endif
 
