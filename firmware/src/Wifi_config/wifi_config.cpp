@@ -11,6 +11,11 @@ const uint16_t websockets_server_port = 8763;
 WebsocketsClient client;
 uint8_t* flash_write_buff;
 
+String ssid_robot;
+String password_robot;
+
+bool internet_connect;
+
 
 
 // Trang HTML với CSS nhúng, lưu vào bộ nhớ flash với từ khóa PROGMEM
@@ -173,12 +178,12 @@ bool nvs_config(void)
       return false;
   }
 
-  String ssid = readStringFromNVS("ssid");
-  String password = readStringFromNVS("password");
+  ssid_robot = readStringFromNVS("ssid");
+  password_robot = readStringFromNVS("password");
 
-  if (ssid.length() > 0 && password.length() > 0) {
+  if (ssid_robot.length() > 0 && password_robot.length() > 0) {
       Serial.println("Connecting to WiFi with stored credentials...");
-      if(connectToWiFi(ssid.c_str(), password.c_str()))
+      if(connectToWiFi(ssid_robot.c_str(), password_robot.c_str()))
       {
         return true;
       }
@@ -222,23 +227,69 @@ void saveWifiCredentials(const char* ssid, const char* password) {
 
 // Hàm kết nối Wi-Fi
 bool connectToWiFi(const char* ssid, const char* password) {
-  int timeout_wf = 0;
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting to Wi-Fi...");
-  while ((WiFi.status() != WL_CONNECTED) && (timeout_wf < 5)){
-    delay(1000);
-    Serial.print(".");
-    timeout_wf++;
-  }
-  if(timeout_wf >= 5)
-  {
+    int timeout_wf = 0;
+    WiFi.begin(ssid, password);
+    Serial.println("Connecting to Wi-Fi...");
+    
+    while ((WiFi.status() != WL_CONNECTED) && (timeout_wf < 5)){
+        delay(1000);
+        Serial.print(".");
+        timeout_wf++;
+    }
+    if(timeout_wf >= 5)
+    {
+        Serial.println();
+        Serial.println("Can't connect to Wi-Fi");
+        return false;
+    }
     Serial.println();
-    Serial.println("Can't connect to Wi-Fi");
-    return false;
-  }
-  Serial.println();
-  Serial.println("Connected to Wi-Fi");
-  return true;
+    Serial.println("Connected to Wi-Fi");
+    return true;
+}
+
+bool check_Wifi_connect(const char* ssid, const char* password)
+{
+    static int cnt_time = 0;
+    WiFi.begin(ssid, password);
+    
+    if ((WiFi.status() != WL_CONNECTED) && (cnt_time < TIME_OUT_3S))
+    {
+        Serial.print(".");
+        cnt_time++;
+    }
+
+    if(cnt_time >= TIME_OUT_3S)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool checkInternet() {
+    static int cnt_time_connect = 0;
+
+    if(Ping.ping("8.8.8.8"))  // Check by connecting to google.com
+    {
+        cnt_time_connect++;
+        if(cnt_time_connect > TIME_OUT_PING)
+        {
+            Serial.println("Connect succesfully");
+            cnt_time_connect = 0;
+            return true;
+        }
+    }
+    else
+    {
+        cnt_time_connect--;
+        if(cnt_time_connect < -TIME_OUT_PING)
+        {
+            Serial.println("Connect failed");
+            cnt_time_connect = 0;
+            return false;
+        }
+    }
+    Serial.printf("cnt_time_connect = %d\r\n", cnt_time_connect);
+    return true;
 }
 
 // Xử lý yêu cầu POST từ form kết nối Wi-Fi

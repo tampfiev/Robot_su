@@ -13,6 +13,7 @@
 #include "../Peripheral/config.h"
 
 #include <ArduinoWebsockets.h>
+#include <ESP32Ping.h>  // Include Ping library
 
 extern const char* robot_ssid;
 extern const char* robot_password;
@@ -22,10 +23,17 @@ extern const uint16_t websockets_server_port;
 extern WebsocketsClient client;
 extern uint8_t* flash_write_buff;
 
+extern String ssid_robot;     //Wifi configured
+extern String password_robot; //Wifi configured
+
+extern bool internet_connect;
+
 
 
 
 bool connectToWiFi(const char* ssid, const char* password);
+bool check_Wifi_connect(const char* ssid, const char* password);
+bool checkInternet();
 void handleConnect(AsyncWebServerRequest *request);
 void connect_wifi_server();
 void disconnect_wifi_server();

@@ -75,8 +75,10 @@ void i2s_adc_data_scale(uint8_t* d_buff, uint8_t* s_buff, uint32_t len) {
 void onEventsCallback(WebsocketsEvent event, String data) {
   if (event == WebsocketsEvent::ConnectionOpened) {
     Serial.println("WebSocket connection opened");
+    internet_connect = true;
   } else if (event == WebsocketsEvent::ConnectionClosed) {
     Serial.println("WebSocket connection closed");
+    internet_connect = false;
     // ESP.restart();
   }
 }
@@ -121,18 +123,32 @@ void voiceProcessTask(void *param)
       if (ulNotificationValue > 0)
       {
           commandDetector->run();
-      }     
+      }
+      // if(push3s_Home())
+      // {
+      //   voice_con.state = NO_READ;
+      //   status_Robot = SLEEPING;
+      // }  
+      if(!internet_connect)
+      {
+        voice_con.state = NO_READ;
+        status_Robot = SLEEPING;
+      }   
     }
     else if((voice_con.state == GET_VOICE_CONVERSATION) && (status_Robot == ROBOT_ONLINE))
     {
       voice_con.sendVoice2Server((const char*)flash_write_buff);
 
-      time_out++;
-      if(time_out > TIME_OUT)
+      if(check_timeout() || push3s_Home())
       {
-        time_out = 0;
+        voice_con.state = NO_READ;
         status_Robot = WAIT_INPUT;
       }
+      if(!internet_connect)
+      {
+        voice_con.state = NO_READ;
+        status_Robot = SLEEPING;
+      } 
     }      
     else if(voice_con.state == SEND_VOICE_SERVER)
     {
@@ -142,6 +158,21 @@ void voiceProcessTask(void *param)
         voice_con.linkSent = true;
         voice_con.sendLink2ESP();  
       }
+      if(check_timeout())
+      {
+        voice_con.state = NO_READ;
+        status_Robot = WAIT_INPUT;
+      }
+      if(push3s_Home())
+      {
+        voice_con.state = NO_READ;
+        status_Robot = SLEEPING;
+      }
+      if(!internet_connect)
+      {
+        voice_con.state = GET_VOICE_CONVERSATION;
+        status_Robot = ROBOT_ONLINE;
+      } 
     }
     vTaskDelay(pdMS_TO_TICKS(10)); 
   }

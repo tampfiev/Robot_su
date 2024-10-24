@@ -20,10 +20,10 @@
 // I2S Microphone Settings
 // Which channel is the I2S microphone on? I2S_CHANNEL_FMT_ONLY_LEFT or I2S_CHANNEL_FMT_ONLY_RIGHT
 // #define I2S_MIC_CHANNEL I2S_CHANNEL_FMT_ONLY_LEFT
-#define I2S_MIC_CHANNEL I2S_CHANNEL_FMT_ONLY_RIGHT
-#define I2S_MIC_SERIAL_CLOCK GPIO_NUM_33  //SCK
-#define I2S_MIC_LEFT_RIGHT_CLOCK GPIO_NUM_26  //WS
-#define I2S_MIC_SERIAL_DATA GPIO_NUM_25 //SD
+#define I2S_MIC_CHANNEL             I2S_CHANNEL_FMT_ONLY_RIGHT
+#define I2S_MIC_SERIAL_CLOCK        GPIO_NUM_33  //SCK
+#define I2S_MIC_LEFT_RIGHT_CLOCK    GPIO_NUM_26 //GPIO_NUM_27  //WS
+#define I2S_MIC_SERIAL_DATA         GPIO_NUM_25 //GPIO_NUM_12 //SD
 
 // Analog Microphone Settings - ADC1_CHANNEL_7 is GPIO35
 #define ADC_MIC_CHANNEL ADC1_CHANNEL_7
@@ -40,9 +40,15 @@
 
 
 #define LED_PIN             GPIO_NUM_2
-#define BUTTON              GPIO_NUM_32
+#define HOME_PIN            GPIO_NUM_21
+#define ENTER_PIN           GPIO_NUM_22
+#define LEFT_PIN            GPIO_NUM_34
+#define RIGHT_PIN           GPIO_NUM_35
 
-#define TIME_OUT             1000 //10s
+#define PUSH_BUTTON         LOW
+
+#define TIME_OUT_3S         300
+#define TIME_OUT_PING       5
 
 
 typedef enum {
@@ -55,14 +61,8 @@ typedef enum {
     ROBOT_SEND_ESP2,
     SENSOR_ON,
     SENSOR_OFF,
-    TIMEOUT,
     SLEEPING,
     ROBOT_WAKEUP,  //11
-    BUTTON_DOWN,
-    SOCKET_CONNECT,
-    SOCKET_DISCONNECT,
-    VOICE_RESPONSE,
-    SEND_VOICE
 } status_robot;
 
 
@@ -72,7 +72,9 @@ extern int status_Robot; //WAITING_WIFI_CONNECT
 
 void LED_ON(void);
 void LED_OFF(void);
-
+int read_BTN(const int _pin);
+bool push3s_Home(void);
+bool check_timeout(void);
 
 
 #endif

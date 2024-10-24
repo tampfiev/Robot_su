@@ -23,6 +23,10 @@ void setup()
   Serial.begin(115200);
   delay(1000);
   Serial.println("Starting up");
+  pinMode(HOME_PIN, INPUT);
+  pinMode(ENTER_PIN, INPUT);
+  pinMode(LEFT_PIN, INPUT);
+  pinMode(RIGHT_PIN, INPUT);
 
 #if(ESP32_WIFI_CONFIG)
   connect_wifi_server(); //config wifi on web server
@@ -58,7 +62,7 @@ void setup()
 #if(ESP32_VOICE_WAKEUP)
   CommandProcessor *command_processor = new CommandProcessor();
   CommandDetector *commandDetector = new CommandDetector(i2s_sampler, command_processor);
-  
+
   xTaskCreatePinnedToCore(voiceProcessTask, "Wakeup", 8192, commandDetector, 1, &voiceProcessTaskHandle, 0);
   i2s_sampler->start(I2S_NUM_0, i2sMicConfig, voiceProcessTaskHandle);
 #endif  

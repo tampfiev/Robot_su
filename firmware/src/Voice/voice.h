@@ -18,6 +18,7 @@
 #include "I2SMicSampler.h"
 #include "I2SSampler.h"
 #include "Cert/cert.h"
+#include "../Wifi_config/wifi_config.h"
 
 
 

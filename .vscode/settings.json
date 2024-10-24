@@ -58,6 +58,7 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
     "string_view": "cpp",
-    "regex": "cpp"
+    "regex": "cpp",
+    "string": "cpp"
   }
 }
