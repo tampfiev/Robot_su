@@ -23,15 +23,15 @@ void setup()
   Serial.begin(115200);
   delay(1000);
   Serial.println("Starting up");
-  pinMode(HOME_PIN, INPUT);
-  pinMode(ENTER_PIN, INPUT);
-  pinMode(LEFT_PIN, INPUT);
-  pinMode(RIGHT_PIN, INPUT);
-  pinMode(SS1_PIN, INPUT);
-  pinMode(SS2_PIN, INPUT);
+  // pinMode(HOME_PIN, INPUT);
+  // pinMode(ENTER_PIN, INPUT);
+  // pinMode(LEFT_PIN, INPUT);
+  // pinMode(RIGHT_PIN, INPUT);
+  // pinMode(SS1_PIN, INPUT);
+  // pinMode(SS2_PIN, INPUT);
 
 #if(ESP32_WIFI_CONFIG)
-  connect_wifi_server(); //config wifi on web server
+  // connect_wifi_server(); //config wifi on web server
   while(status_Robot == WAITING_WIFI_CONNECT)
   {
       if(nvs_config())
@@ -40,7 +40,7 @@ void setup()
       }
       delay(10);
   }
-  disconnect_wifi_server();
+  // disconnect_wifi_server();
 #endif
   // make sure we don't get killed for our long running tasks
   // esp_task_wdt_init(10, false);
@@ -48,7 +48,7 @@ void setup()
   // disableCore1WDT();  // Disable watchdog for core 1
   // startI2S();
 #if(ESP32_VOICE_CONVERSATION)
-  i2s_read_buff = (char*)calloc(I2S_READ_LEN, sizeof(char));
+  // i2s_read_buff = (char*)calloc(I2S_READ_LEN, sizeof(char));
   flash_write_buff = (uint8_t*)calloc(I2S_READ_LEN, sizeof(char));
 
   client.onEvent(onEventsCallback);

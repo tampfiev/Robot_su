@@ -54,7 +54,7 @@ void onMessageCallback(WebsocketsMessage message) {
     Serial.println("Text: " + textToSpeech);
     Serial.println("Audio Link: " + voice_con.linkAudio);
 
-    voice_con.state = 2;
+    voice_con.state = SEND_VOICE_SERVER;
     voice_con.linkSent = false;
   }
 }

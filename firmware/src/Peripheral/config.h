@@ -37,10 +37,10 @@
 #define ESP32_WIFI_CONFIG              1
 #define ESP32_VOICE_WAKEUP             1
 #define ESP32_VOICE_CONVERSATION       1
-#define ESP32_BUTTON                   1
+#define ESP32_BUTTON                   0
 #define ESP32_SENSOR                   0
-#define ESP32_TIMEOUT                  1
-#define ESP32_INTERNET                 1
+#define ESP32_TIMEOUT                  0
+#define ESP32_INTERNET                 0
 
 
 #define LED_PIN             GPIO_NUM_2
