@@ -19,22 +19,22 @@ int read_BTN(const int _pin)
 
 bool push3s_Home(void)
 {
-    static int cnt_time = 0;
+    // static int cnt_time = 0;
 
-    if(read_BTN(HOME_PIN) == PUSH_BUTTON)
-    {
-        cnt_time++;
-        if(cnt_time > TIME_OUT_3S)
-        {
-            cnt_time = 0;
-            return true;
-        }
-    }
-    else
-    {
-        cnt_time = 0;
-    }
-    return false;
+    // if(read_BTN(HOME_PIN) == PUSH_BUTTON)
+    // {
+    //     cnt_time++;
+    //     if(cnt_time > TIME_OUT_3S)
+    //     {
+    //         cnt_time = 0;
+    //         return false;
+    //     }
+    // }
+    // else
+    // {
+    //     cnt_time = 0;
+    // }
+    return true;
 }
 
 bool check_timeout(void)
@@ -44,9 +44,25 @@ bool check_timeout(void)
     if(cnt_time > TIME_OUT_3S)
     {
         cnt_time = 0;
-        return true;
+        return false;
     }
-    return false;
+    return true;
+}
+
+bool check_sensor(const int _sensor_pin)
+{
+    static int cnt_time = 0;
+
+    if(!read_BTN(_sensor_pin))
+    {
+        // cnt_time++;
+        // if(cnt_time > 3)
+        // {
+        //     cnt_time = 0;
+            return false;
+        // }
+    }
+    return true;
 }
 
 

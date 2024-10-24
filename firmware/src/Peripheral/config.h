@@ -37,6 +37,10 @@
 #define ESP32_WIFI_CONFIG              1
 #define ESP32_VOICE_WAKEUP             1
 #define ESP32_VOICE_CONVERSATION       1
+#define ESP32_BUTTON                   1
+#define ESP32_SENSOR                   0
+#define ESP32_TIMEOUT                  1
+#define ESP32_INTERNET                 1
 
 
 #define LED_PIN             GPIO_NUM_2
@@ -44,6 +48,9 @@
 #define ENTER_PIN           GPIO_NUM_22
 #define LEFT_PIN            GPIO_NUM_34
 #define RIGHT_PIN           GPIO_NUM_35
+
+#define SS1_PIN             GPIO_NUM_4
+#define SS2_PIN             GPIO_NUM_32
 
 #define PUSH_BUTTON         LOW
 
@@ -59,7 +66,6 @@ typedef enum {
     ROBOT_SEND_VOICE,
     ROBOT_RECEIVED_RESPONE,
     ROBOT_SEND_ESP2,
-    SENSOR_ON,
     SENSOR_OFF,
     SLEEPING,
     ROBOT_WAKEUP,  //11
@@ -75,7 +81,7 @@ void LED_OFF(void);
 int read_BTN(const int _pin);
 bool push3s_Home(void);
 bool check_timeout(void);
-
+bool check_sensor(const int _sensor_pin);
 
 #endif
 

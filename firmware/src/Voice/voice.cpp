@@ -124,56 +124,102 @@ void voiceProcessTask(void *param)
       {
           commandDetector->run();
       }
-      // if(push3s_Home())
-      // {
-      //   voice_con.state = NO_READ;
-      //   status_Robot = SLEEPING;
-      // }  
-      if(!internet_connect)
+#if(ESP32_BUTTON)
+      if(!push3s_Home())
       {
         voice_con.state = NO_READ;
         status_Robot = SLEEPING;
-      }   
-    }
-    else if((voice_con.state == GET_VOICE_CONVERSATION) && (status_Robot == ROBOT_ONLINE))
-    {
-      voice_con.sendVoice2Server((const char*)flash_write_buff);
+      } 
+#endif 
 
-      if(check_timeout() || push3s_Home())
-      {
-        voice_con.state = NO_READ;
-        status_Robot = WAIT_INPUT;
-      }
+#if(ESP32_INTERNET)
       if(!internet_connect)
       {
         voice_con.state = NO_READ;
         status_Robot = SLEEPING;
       } 
-    }      
-    else if(voice_con.state == SEND_VOICE_SERVER)
-    {
-      if (!voice_con.linkSent) {
-        memset(flash_write_buff, 0, I2S_READ_LEN);
-        status_Robot = ROBOT_RECEIVED_RESPONE;
-        voice_con.linkSent = true;
-        voice_con.sendLink2ESP();  
-      }
-      if(check_timeout())
+#endif
+
+#if(ESP32_SENSOR)
+      if(!check_sensor(SS1_PIN) || !check_sensor(SS2_PIN))
       {
-        voice_con.state = NO_READ;
-        status_Robot = WAIT_INPUT;
-      }
-      if(push3s_Home())
-      {
-        voice_con.state = NO_READ;
-        status_Robot = SLEEPING;
-      }
-      if(!internet_connect)
-      {
-        voice_con.state = GET_VOICE_CONVERSATION;
-        status_Robot = ROBOT_ONLINE;
+        status_Robot = SENSOR_OFF;
       } 
+#endif 
     }
+    else if(status_Robot == ROBOT_ONLINE)
+    {
+      if(voice_con.state == GET_VOICE_CONVERSATION)
+      {
+        voice_con.sendVoice2Server((const char*)flash_write_buff);
+#if(ESP32_BUTTON && ESP32_TIMEOUT)
+        if(!check_timeout() || !push3s_Home())
+        {
+          voice_con.state = NO_READ;
+          status_Robot = WAIT_INPUT;
+        }
+#endif
+
+#if(ESP32_INTERNET)
+        if(!internet_connect)
+        {
+          voice_con.state = NO_READ;
+          status_Robot = SLEEPING;
+        } 
+#endif
+      }      
+      else if(voice_con.state == SEND_VOICE_SERVER)
+      {
+        if (!voice_con.linkSent) {
+          memset(flash_write_buff, 0, I2S_READ_LEN);
+          status_Robot = ROBOT_RECEIVED_RESPONE;
+          voice_con.linkSent = true;
+          voice_con.sendLink2ESP();  
+        }
+
+#if(ESP32_TIMEOUT)
+        if(!check_timeout())
+        {
+          voice_con.state = NO_READ;
+          status_Robot = WAIT_INPUT;
+        }
+#endif
+
+#if(ESP32_BUTTON)
+        if(!push3s_Home())
+        {
+          voice_con.state = NO_READ;
+          status_Robot = SLEEPING;
+        }
+#endif
+      
+#if(ESP32_INTERNET)
+        if(!internet_connect)
+        {
+          voice_con.state = GET_VOICE_CONVERSATION;
+          status_Robot = ROBOT_ONLINE;
+        } 
+#endif
+      }
+    }
+    else if(status_Robot == SENSOR_OFF)
+    {
+#if(ESP32_BUTTON)
+      if(!push3s_Home())
+      {
+        voice_con.state = NO_READ;
+        status_Robot = SLEEPING;
+      }
+#endif
+
+#if(ESP32_SENSOR)
+      if(check_sensor(SS1_PIN) && check_sensor(SS2_PIN))
+      {
+        status_Robot = WAIT_INPUT;
+      }
+#endif
+    }
+    Serial.printf("status RB = %d, state_voice = %d\r\n", status_Robot, voice_con.state);
     vTaskDelay(pdMS_TO_TICKS(10)); 
   }
 }

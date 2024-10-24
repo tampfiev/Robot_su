@@ -27,6 +27,8 @@ void setup()
   pinMode(ENTER_PIN, INPUT);
   pinMode(LEFT_PIN, INPUT);
   pinMode(RIGHT_PIN, INPUT);
+  pinMode(SS1_PIN, INPUT);
+  pinMode(SS2_PIN, INPUT);
 
 #if(ESP32_WIFI_CONFIG)
   connect_wifi_server(); //config wifi on web server
